@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<!--full-->
+<robot name="my_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+  <xacro:property name="theta1" value="30" />
+
+
+  <link name="base_link">
+    <inertial>
+      <mass value="5"/>
+      <origin xyz="0 0 ${0.3*sin(radians(theta1))+0.115}" rpy="0 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 ${0.3*sin(radians(theta1))+0.115}" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.15 0.15"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${0.3*sin(radians(theta1))+0.115}" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.15 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_link">
+    <selfCollide>true</selfCollide>
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+
+  <joint name="arm2_joint_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm2_joint_link"/> 
+  </joint>
+
+
+  <link name="arm2_joint_link">
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="0.01 -0.0289 ${0.3*sin(radians(theta1))+0.025}" rpy="0 0 0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.01 -0.0289 ${0.3*sin(radians(theta1))+0.025}" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.01 -0.0289 ${0.3*sin(radians(theta1))+0.025}" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm2_joint_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+
+ <joint name="arm2_joint" type="revolute">
+    <parent link="arm2_joint_link"/>
+    <child link="arm2_link"/>
+    <limit upper="0.0" lower="${-30*pi/180}" effort="100" velocity="100"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="0.01 -0.0289 ${0.3*sin(radians(theta1))+0.025}" rpy="0 ${-90*pi/180} 0"/>
+    <dynamics damping="0.1"/>
+  </joint>
+  <transmission name="arm2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="arm2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="arm2_motor">
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+       <mechanismReduction>1</mechanismReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="arm2_joint">
+    <provideFeedback>true</provideFeedback>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <link name="arm2_link">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 ${0.15*0.5*cos(radians(theta1))}" rpy="0 -${theta1*pi/180} 0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 ${0.15*0.5*cos(radians(theta1))}" rpy="0 -${theta1*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 ${0.15*0.5*cos(radians(theta1))}" rpy="0 -${theta1*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm2_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+
+  <joint name="arm1_joint" type="revolute">
+    <parent link="arm2_link"/>
+    <child link="arm1_joint_link"/>
+    <limit upper="${60*pi/180}" lower="0.0" effort="100" velocity="100"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="-${0.15*sin(radians(theta1))} 0.03 ${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+    <dynamics damping="0.1"/>
+  </joint>
+  <transmission name="arm1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="arm1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="arm1_motor">
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+       <mechanismReduction>1</mechanismReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="arm1_joint">
+    <provideFeedback>true</provideFeedback>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+
+  <link name="arm1_joint_link">
+    <inertial>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0 "/>
+      <geometry>
+        <cylinder length="0.06" radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm1_joint_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+
+  <joint name="arm1_joint_link_joint" type="fixed">
+    <parent link="arm1_joint_link"/>
+    <child link="arm1_link"/> 
+  </joint>
+
+
+  <link name="arm1_link">
+    <inertial>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 -${0.15*0.5*cos(radians(theta1))}" rpy="0 ${theta1*pi/180} 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 -${0.15*0.5*cos(radians(theta1))}" rpy="0 ${theta1*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-${0.15*0.5*sin(radians(theta1))} 0 -${0.15*0.5*cos(radians(theta1))}" rpy="0 ${theta1*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm1_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+
+   <joint name="arm0_joint" type="fixed">
+    <parent link="arm1_link"/>
+    <child link="arm0_link"/> 
+  </joint>
+
+
+  <link name="arm0_link">
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="-${0.15*sin(radians(theta1))} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="-${0.15*sin(radians(theta1))} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-${0.15*sin(radians(theta1))} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm0_link">
+    <selfCollide>true</selfCollide>
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+
+  <joint name="foot_joint" type="fixed">
+    <parent link="arm0_link"/>
+    <child link="foot_link"/> 
+  </joint>
+
+  
+  <link name="foot_link">
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="-${0.15*sin(radians(theta1))+0.015} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="-${0.15*sin(radians(theta1))+0.015} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.005 0.15 0.15"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-${0.15*sin(radians(theta1))+0.015} 0 -${0.15*cos(radians(theta1))}" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.005 0.15 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="foot_link">
+    <mu1>1</mu1>
+    <mu2>1</mu2>
+    <selfCollide>true</selfCollide>
+    <material>Gazebo/Gold</material>
+  </gazebo>
+
+
+
+
+  <gazebo>
+    <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <updateRate>100.0</updateRate>
+      <topicName>arm1_sensor/raw</topicName>
+      <jointName>arm1_joint</jointName>
+      <gaussianNoise>0.0</gaussianNoise>
+    </plugin>
+    <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+      <updateRate>100.0</updateRate>
+      <topicName>arm2_sensor/raw</topicName>
+      <jointName>arm2_joint</jointName>
+      <gaussianNoise>0.0</gaussianNoise>
+    </plugin>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/my_robot</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+
+ 
+
+
+
+
+
+
+</robot>
+
+  

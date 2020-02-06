@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+
+<robot name="my_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="pi" value="3.1415926535897931" />
+
+
+  <link name="world"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/> 
+  </joint>
+
+
+  <link name="base_link">
+    <inertial>
+      <mass value="10"/>
+      <origin xyz="0.2 0.035 0.4" rpy="0 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.2 0.035 0.4" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.8"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.2 0.035 0.4" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.8"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="base_link">
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+
+  <joint name="guide_joint" type="prismatic">
+    <parent link="base_link"/>
+    <child link="guide_link"/>
+    <limit upper="0.4" lower="-0.2" effort="1000" velocity="100"/>
+    <origin xyz="0.2 0 0.365" rpy="0 ${-90*pi/180} 0"/>
+    <dynamics damping="0.1"/>
+  </joint>
+
+
+  <link name="guide_link">
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0.0625" rpy="0 ${90*pi/180} 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.0625" rpy="0 ${90*pi/180} 0"/>
+      <geometry>
+        <box size="0.125 0.03 0.03"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0625" rpy="0 ${90*pi/180} 0"/>
+      <geometry>
+        <box size="0.125 0.03 0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="guide_link">
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+
+  <joint name="hashida_joint" type="fixed">
+    <parent link="guide_link"/>
+    <child link="hashida_box"/> 
+  </joint>
+
+
+  <link name="hashida_box">
+    <inertial>
+      <mass value="3"/>
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.15 0.15"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.15 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="hashida_box">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+
+  <joint name="arm2_joint_link_joint" type="fixed">
+    <parent link="hashida_box"/>
+    <child link="arm2_joint_link"/> 
+  </joint>
+
+
+  <link name="arm2_joint_link">
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="-0.09 0 0.205" rpy="0 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.09 0 0.205" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.09 0 0.205" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm2_joint_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+
+  <joint name="arm2_joint" type="revolute">
+    <parent link="arm2_joint_link"/>
+    <child link="arm2_link"/>
+    <limit upper="0.5" lower="0.0" effort="1000" velocity="100"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="-0.09 0 0.205" rpy="0 0 0"/>
+    <dynamics damping="0.1"/>
+  </joint>
+  <transmission name="arm2_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="arm2_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="arm2_motor">
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+       <mechanismReduction>1</mechanismReduction>
+    </actuator>
+  </transmission>
+
+
+  <link name="arm2_link">
+    <inertial>
+      <mass value="0.08"/>
+      <origin xyz="-0.06495 0 0.0375" rpy="0 ${-60*pi/180} 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.06495 0 0.0375" rpy="0 ${-60*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.01"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.06495 0 0.0375" rpy="0 ${-60*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.01"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm2_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+
+  <joint name="arm1_joint" type="revolute">
+    <parent link="arm2_link"/>
+    <child link="arm1_joint_link"/>
+    <limit upper="0.0" lower="-1.0" effort="1000" velocity="100"/>
+    <axis xyz="0 1 0"/>
+    <origin xyz="-0.1299 0.03 0.075" rpy="0 0 0"/>
+    <dynamics damping="0.1"/>
+  </joint>
+  <transmission name="arm1_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="arm1_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="arm1_motor">
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+       <mechanismReduction>1</mechanismReduction>
+    </actuator>
+  </transmission>
+  <gazebo reference="arm1_joint">
+  </gazebo>
+
+
+  <link name="arm1_joint_link">
+    <inertial>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0"/>
+      <geometry>
+        <cylinder length="0.06" radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.015 0" rpy="${90*pi/180} 0 0 "/>
+      <geometry>
+        <cylinder length="0.06" radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm1_joint_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+
+  <joint name="arm1_joint_link_joint" type="fixed">
+    <parent link="arm1_joint_link"/>
+    <child link="arm1_link"/> 
+  </joint>
+
+
+  <link name="arm1_link">
+    <inertial>
+      <origin xyz="-0.06495 0 -0.0375" rpy="0 ${60*pi/180} 0"/>
+      <mass value="0.08"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.06495 0 -0.0375" rpy="0 ${60*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.01"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.06495 0 -0.0375" rpy="0 ${60*pi/180} 0"/>
+      <geometry>
+        <cylinder length="0.15" radius="0.01"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm1_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+
+   <joint name="arm0_joint" type="fixed">
+    <parent link="arm1_link"/>
+    <child link="arm0_link"/> 
+  </joint>
+
+
+  <link name="arm0_link">
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="-0.1299 0 -0.075" rpy="0 0 0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.1299 0 -0.075" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.1299 0 -0.075" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="arm0_link">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/my_robot</robotNamespace>
+    </plugin>
+  </gazebo>
+
+
+
+
+
+
+
+
+</robot>
+
+  
